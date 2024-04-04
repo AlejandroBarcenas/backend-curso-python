@@ -1,38 +1,60 @@
+from typing import Any
 from databases.roles import roles as roles_database
 from databases.users import users
 
 
-def email_is_valid(email: str) -> bool:
-    unique = True
-    for user in users:
-        if email == user["email"]:
-            unique = False
-            break
-    return unique
+class UserValidator:
 
-def age_is_valid(age: int) -> bool:
-    if age > 18:
-        return True
-    return False
+    user: dict[str, Any]
 
-def password_is_valid(password: str) -> bool:
-    if len(password) > 8 and len(password) < 16:
-        return True
-    return False
-
-def roles_are_valid(roles: list[str]) -> bool:
-    roles_database_list = []
-    for role in roles_database:
-        roles_database_list.append(role["name"])
-    roles_set = set(roles)
-    roles_database_set = set(roles_database_list)
+    def __init__(self, user: dict[str, Any]) -> None:
+        self.user = user
     
-    difference = roles_set - roles_database_set
-    if len(difference) > 0 or len(roles) == 0:
+    def _email_is_valid(self) -> bool:
+        unique = True
+        for user in users:
+            if self.user["email"] == user["email"]:
+                unique = False
+                break
+        return unique
+    
+    def _age_is_valid(self) -> bool:
+        if self.user["age"] > 18:
+            return True
         return False
-    return True
 
+    def _password_is_valid(self) -> bool:
+        if len(self.user["password"]) > 8 and len(self.user["password"]) < 16:
+            return True
+        return False
 
+    def _roles_are_valid(self) -> bool:
+        roles_database_list = []
+        for role in roles_database:
+            roles_database_list.append(role["name"])
+        roles_set = set(self.user["roles"])
+        roles_database_set = set(roles_database_list)
+        
+        difference = roles_set - roles_database_set
+        if len(difference) > 0 or len(self.user["roles"]) == 0:
+            return False
+        return True
 
+    def exists_id(self, id_: str) -> bool:
+        exists = False
+        for user in users:
+            if id_ == user["id"]:
+                exists = True
+                break
+        return exists
     
+    def is_valid(self):
+        email_ = self._email_is_valid()
+        age_ = self._age_is_valid()
+        password_ = self._password_is_valid()
+        roles_ = self._roles_are_valid()
+        
+        if email_ and age_ and password_ and roles_:
+            return True
+        return False
 
