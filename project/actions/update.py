@@ -2,7 +2,15 @@ from typing import Any
 from core.validators import UserValidator
 from core.operations import update_user
 
-def update(user: dict[str, Any]):
+def update(user: dict[str, Any]) -> bool | None:
+    """Modificar usuario.
+
+    Args:
+        user (dict[str, Any]): Identificador de usuario a obtener.
+
+    Returns:
+        bool | None: False si no existe usuario a modificar.
+    """
     
     obj_user = UserValidator(user=user)
     if not obj_user.exists_id(id_=user["id"]):
