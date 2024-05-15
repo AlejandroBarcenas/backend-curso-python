@@ -1,11 +1,9 @@
-from actions.insert import insert
-from actions.update import update
-from actions.delete import delete
+from core.operations import insert_user, update_user, delete_user, get_users
 from actions.get import get
+from models import User
 
 
 # INSERTAR
-
 # user = {
 #     "name": "Alejandro",
 #     "last_name": "Barcenas Rosas",
@@ -14,32 +12,35 @@ from actions.get import get
 #     "password": "pwd123456",
 #     "roles": ["ADMIN"]
 # }
-# insert(user=user)
+# obj_user = User(**user)
+# insert_user(user=obj_user)
 
 
 # MODIFICAR
-
 # user = {
-#     "id": "1234",
+#     "id": "664448aeef147454698ef561",
 #     "age": 20,
 #     "email": "alejandro_nuevo@email.com",
-#     "roles": ["WRITER"]
+#     "roles": ["WRITER", "READER"]
 # }
-# update(user)
+# user_obj = User(**user)
+# update_user(user=user_obj)
 
 
 # ELIMINAR
-
-# user = {
-#     "id": "1234"
-# }
-# delete(id=user["id"])
+# user = {"id": "6644491038a097313d06a13a"}
+# user_obj = User(**user)
+# delete_user(id_=user_obj.id)
 
 
 # OBTENER
 
-# user = {"id": "1234"}
-# users = get(id=user["id"])
+user = {"id": "664448aeef147454698ef561"}
+user_obj = User(**user)
+
+# users = get_users(id_=user_obj.id)
 # print(f"\nUSERS: {users}\n")
-# all_users = get(id=None)
+
+
+# all_users = get_users(id_=None)
 # print(f"\nALL_USERS: {all_users}\n")

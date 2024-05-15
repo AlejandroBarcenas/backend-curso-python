@@ -1,18 +1,17 @@
 
-
-import os
 from typing import Any
-from uuid import uuid4
 
-from core.utils import FileManager
+from bson import ObjectId
+
+from models import User
+from pymongo import MongoClient
 
 
-file_manager_obj = FileManager(
-    users_path=f"{os.getcwd()}/databases/users.json",
-    roles_path=f"{os.getcwd()}/databases/roles.json"
-)
+client = MongoClient("mongodb://localhost:27017")
+database = client["curso-python"]
+collection = database["users"]
 
-def insert_user(user: dict[str, Any]) -> None:
+def insert_user(user: User) -> None:
     """Insertar usuario en base de datos.
 
     Se le genera un identificador único (uuid) al usuario
@@ -21,14 +20,9 @@ def insert_user(user: dict[str, Any]) -> None:
     Args:
         user (dict[str, Any]): Usuario a agregar a base de datos.
     """
-    users = file_manager_obj.get_users()
-    print(f"OLD USERS: {users}")
-    user["id"] = str(uuid4())
-    users.append(user)
-    print(f"\n\n NEW USERS: {users}")
-    file_manager_obj.set_users(users)
+    collection.insert_one(user.model_dump(exclude_none=True))
 
-def update_user(user: dict[str, Any]) -> None:
+def update_user(user: User) -> None:
     """Modificar usuario en base de datos.
 
     Se modifica registro de usuario en lista de usuarios (base de datos).
@@ -36,20 +30,11 @@ def update_user(user: dict[str, Any]) -> None:
     Args:
         user (dict[str, Any]): Usuario a modificar en base de datos.
     """
-    users = file_manager_obj.get_users()
-    print(f"OLD USERS: {users}")
-    # Find user
-    index = 0
-    for index, user_database in enumerate(users):
-        if user["id"] == user_database["id"]:
-            index = index
-            break
-    # Update user
-    for key in user:
-        print(key)
-        users[index][key] = user[key]
-    print(f"\n\n NEW USERS: {users}")
-    file_manager_obj.set_users(users)
+    filter_ = {"_id": ObjectId(user.id)}
+    update = {
+        "$set": user.model_dump(exclude_none=True, exclude={'id'})
+    }
+    collection.update_one(filter_, update)
 
 def delete_user(id_: str) -> None:
     """Eliminar usuario de base de datos.
@@ -57,18 +42,8 @@ def delete_user(id_: str) -> None:
     Args:
         id_ (str): Identificador de usuario a eliminar.
     """
-    users = file_manager_obj.get_users()
-    print(f"OLD USERS: {users}")
-    # Find user
-    index = 0
-    for index, user_database in enumerate(users):
-        if id_ == user_database["id"]:
-            index = index
-            break
-    # Update user
-    users.pop(index)
-    print(f"\n\n NEW USERS: {users}")
-    file_manager_obj.set_users(users)
+    filter_ = {"_id": ObjectId(id_)}
+    collection.delete_one(filter_)
 
 def get_users(id_: str | None) -> list[dict[str, Any]]:
     """Obtener usuario(s) de base de datos.
@@ -83,13 +58,8 @@ def get_users(id_: str | None) -> list[dict[str, Any]]:
     Returns:
         list[dict[str, Any]]: Lista de usuario(s) obtenidos de base de datos.
     """
-    users = file_manager_obj.get_users()
+    filter_ = {}
     if id_:
-        # Find user
-        index = 0
-        for index, user_database in enumerate(users):
-            if id_ == user_database["id"]:
-                index = index
-                break
-        return [users[index]]
-    return users
+        filter_ = {"_id": ObjectId(id_)}
+    users = collection.find(filter_)
+    return list(users)
