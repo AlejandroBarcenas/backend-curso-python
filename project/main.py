@@ -4,19 +4,19 @@ from models import User
 
 
 # INSERTAR
-# user = {
-#     "name": "Alejandro",
-#     "last_name": "Barcenas Rosas",
-#     "age": 20,
-#     "email": "alejandro1@email.com",
-#     "password": "pwd123456",
-#     "roles": ["ADMIN"]
-# }
-# obj_user = User(**user)
-# insert_user(user=obj_user)
+user = {
+    "name": "Alejandro",
+    "last_name": "Barcenas Rosas",
+    "age": 20,
+    "email": "alejandro1@email.com",
+    "password": "pwd123456",
+    "roles": ["ADMIN"]
+}
+obj_user = User(**user)
+insert_user(user=obj_user)
 
 
-# MODIFICAR
+# # MODIFICAR
 # user = {
 #     "id": "664448aeef147454698ef561",
 #     "age": 20,
@@ -27,16 +27,16 @@ from models import User
 # update_user(user=user_obj)
 
 
-# ELIMINAR
+# # ELIMINAR
 # user = {"id": "6644491038a097313d06a13a"}
 # user_obj = User(**user)
 # delete_user(id_=user_obj.id)
 
 
-# OBTENER
+# # OBTENER
 
-user = {"id": "664448aeef147454698ef561"}
-user_obj = User(**user)
+# user = {"id": "664448aeef147454698ef561"}
+# user_obj = User(**user)
 
 # users = get_users(id_=user_obj.id)
 # print(f"\nUSERS: {users}\n")
